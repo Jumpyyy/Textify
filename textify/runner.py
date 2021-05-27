@@ -17,6 +17,8 @@ import tensorflow as tf
 from textify.estimator import Evaluator
 from textify.estimator import CheckpointAveragator
 from textify.estimator import BestCheckpointExporter
+from npu_bridge.estimator.npu.npu_config import NPURunConfig
+from npu_bridge.estimator.npu.npu_estimator import NPUEstimator
 
 tf.logging.set_verbosity(tf.logging.INFO)
 
@@ -44,14 +46,14 @@ class Runner:
         save_checkpoints_steps = config.get('save_checkpoints_steps', 500)
         keep_checkpoint_max = config.get('keep_checkpoint_max', 5)
 
-        run_config = tf.estimator.RunConfig(
+        run_config = NPURunConfig(
             model_dir=config["model_dir"],
             session_config=session_config_base,
             save_checkpoints_steps=save_checkpoints_steps,
             keep_checkpoint_max=keep_checkpoint_max,
             tf_random_seed=seed)
 
-        self._estimator = tf.estimator.Estimator(
+        self._estimator = NPUEstimator(
             model_fn=estimator.model_fn(eval_hooks=eval_hooks, external_eval_hooks=external_eval_hooks),
             config=run_config
         )
